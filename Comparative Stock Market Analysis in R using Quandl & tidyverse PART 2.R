@@ -1,23 +1,23 @@
 #Comercio con bandas de Bollinger
 
-#OBJETIVO: identificar patrones para saber cÛmo se comporta una acciÛn. 
-#Predecir los precios de las acciones utilizando la metodologÌa convencional ARIMA.
+#OBJETIVO: identificar patrones para saber c√≥mo se comporta una acci√≥n. 
+#Predecir los precios de las acciones utilizando la metodolog√≠a convencional ARIMA.
 
 ##Bandas de Bollinger: Estas bandas representan la volatilidad 
 ##de las acciones a medida que aumenta o  disminuye. Las bandas se colocan
-##por encima  y por debajo de la lÌnea de promedio mÛvil de las acciones.   
+##por encima  y por debajo de la l√≠nea de promedio m√≥vil de las acciones.   
 ##Cuanto mayor es la brecha entre las bandas, mayor es el grado de volatilidad.
 
-##Hay tres lÌneas en la Banda de Bollinger,
-#La lÌnea media con promedio mÛvil del perÌodo N (MA); SMA de 20 dÌas
-#Una banda superior en K multiplicada por una desviaciÛn est·ndar del perÌodo 
-# N por encima de la media mÛvil; SMA + de 20 dÌas (des est·n de precio 20dÌasx2)
-#Una banda inferior en K multiplicada por una desviaciÛn est·ndar del perÌodo N 
-# por debajo de la media mÛvil; SMA de 20 dÌas: (des est·n de precio de 20dÌasx2)
+##Hay tres l√≠neas en la Banda de Bollinger,
+#La l√≠nea media con promedio m√≥vil del per√≠odo N (MA); SMA de 20 d√≠as
+#Una banda superior en K multiplicada por una desviaci√≥n est√°ndar del per√≠odo 
+# N por encima de la media m√≥vil; SMA + de 20 d√≠as (des est√°n de precio 20d√≠asx2)
+#Una banda inferior en K multiplicada por una desviaci√≥n est√°ndar del per√≠odo N 
+# por debajo de la media m√≥vil; SMA de 20 d√≠as: (des est√°n de precio de 20d√≠asx2)
 
 ####NOTA
-##(La SMA es el promedio mÛvil simple, la desviaciÛn est·ndar, el perÌodo K y N 
-##generalmente se establece en 20 dÌas. Las bandas superior e inferior se colocan 
+##(La SMA es el promedio m√≥vil simple, la desviaci√≥n est√°ndar, el per√≠odo K y N 
+##generalmente se establece en 20 d√≠as. Las bandas superior e inferior se colocan 
 ##2 unidades arriba y abajo respectivamente.)
 
 library(Quandl)
@@ -47,7 +47,7 @@ SBI<-cbind(SBI,Stock="")
 Canara<-cbind(Canara,Stock="")
 BOB<-cbind(BOB,Stock="")
 
-## Pegue el nombre de la acciÛn en esa columna
+## Pegue el nombre de la acci√≥n en esa columna
 ICICI$Stock<-paste(ICICI$Stock,"ICICI",sep="")
 PNB$Stock<-paste(PNB$Stock,"PNB",sep="")
 Axis$Stock<-paste(Axis$Stock,"Axis",sep="")
@@ -65,22 +65,22 @@ start<-ymd("2016-09-01")
 
 Master_Data<-Master_Data%>% as_tibble() %>% group_by(Stock)
 
-#IdentificaciÛn de patrones
+#Identificaci√≥n de patrones
 
-##El patrÛn de doble techo muestra que la demanda est· superando a la oferta 
+##El patr√≥n de doble techo muestra que la demanda est√° superando a la oferta 
 #(predominan los compradores) hasta el primer techo, lo que hace que los precios suban.
 #El equilibrio entre la oferta y la demanda se invierte; la oferta supera a la 
 #demanda (predominan los vendedores), lo que hace que los precios caigan. 
-#DespuÈs de un valle de precios, los compradores vuelven a predominar y los 
-#precios suben. Si los comerciantes ven que los precios no est·n superando su 
+#Despu√©s de un valle de precios, los compradores vuelven a predominar y los 
+#precios suben. Si los comerciantes ven que los precios no est√°n superando su 
 #nivel en el primer top, los vendedores pueden volver a prevalecer, bajando 
 #los precios y haciendo que se forme un doble top. 
 
-##Un doble fondo es la formaciÛn final en un mercado en declive. 
-#Es idÈntico al doble techo, excepto por la relaciÛn inversa en el precio. 
-#El patrÛn est· formado por dos mÌnimos de precios separados por un pico local
-#que define la lÌnea del cuello. La formaciÛn se completa y se confirma cuando
-#el precio sube por encima de la lÌnea del cuello, lo que indica que un aumento
+##Un doble fondo es la formaci√≥n final en un mercado en declive. 
+#Es id√©ntico al doble techo, excepto por la relaci√≥n inversa en el precio. 
+#El patr√≥n est√° formado por dos m√≠nimos de precios separados por un pico local
+#que define la l√≠nea del cuello. La formaci√≥n se completa y se confirma cuando
+#el precio sube por encima de la l√≠nea del cuello, lo que indica que un aumento
 #de precio adicional es inminente o altamente probable.
 
 
@@ -139,19 +139,19 @@ Master_Data%>%filter(Stock=="Canara"|Stock=="BOB")%>%ggplot(aes(x=Date,y=Close))
   ) +
   theme(legend.position="none")
 
-##PredicciÛn de precios de acciones
-#TambiÈn analizaremos la parte aleatoria del movimiento del precio de las acciones,
-#llamado ruido blanco e incluiremos en nuestro modelo de predicciÛn.
+##Predicci√≥n de precios de acciones
+#Tambi√©n analizaremos la parte aleatoria del movimiento del precio de las acciones,
+#llamado ruido blanco e incluiremos en nuestro modelo de predicci√≥n.
 
-#Dos metodolÛgias que combinaremos:
-#1 Enfoque RegresiÛn
+#Dos metodol√≥gias que combinaremos:
+#1 Enfoque Regresi√≥n
 #2 ARIMA
 
 ## Descarga de datos
 PNB = Quandl("NSE/ICICIBANK",collapse="monthly",start_date="2016-09-01",type="raw")
 Axis=Quandl("NSE/AXISBANK",collapse="monthly",start_date="2016-09-01",type="raw")
 
-## Convertir el conjunto de datos PNB y AXIS a df par aun modeo de regresiÛn
+## Convertir el conjunto de datos PNB y AXIS a df par aun modeo de regresi√≥n
 PNB_df=PNB
 Axis_df=Axis
 colnames(PNB_df)<-c("Date","Open","High","Low","Last","Close","TTQ","Turnover")
@@ -161,7 +161,7 @@ colnames(Axis_df)<-c("Date","Open","High","Low","Last","Close","TTQ","Turnover")
 PNB_df$TTQ<-PNB_df$TTQ/100000
 Axis_df$TTQ<-Axis_df$TTQ/100000
 
-##Modelos de regresiÛn 
+##Modelos de regresi√≥n 
 m1=lm(PNB_df$Close~PNB_df$High+PNB_df$Low+PNB_df$TTQ)
 p1.df=as.data.frame(predict(m1,interval="predict"))
 m3=lm(Axis_df$Close~Axis_df$High+Axis_df$Low+Axis_df$TTQ)
@@ -235,7 +235,6 @@ PNB_Plot<-ggplot(data=PNB_com,aes(x= Date, y = Close,color=Key,label=Close)) +
         ,axis.title = element_text(size = 18, color = '#555555')
         ,axis.title.y = element_text(hjust=0.5,size=15)
         ,axis.title.x = element_text(hjust = 0.5,size=15))
-
 
 Axis_Plot<- ggplot(data=Axis_com,aes(x= Date, y = Close,color=Key,label=Close)) +
   # Prediction intervals
